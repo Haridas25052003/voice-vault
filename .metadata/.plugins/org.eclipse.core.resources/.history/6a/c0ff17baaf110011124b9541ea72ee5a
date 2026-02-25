@@ -1,0 +1,36 @@
+package com.example.demo.config;
+
+import com.example.demo.handler.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+
+// @Configuration tells Spring: "This class has configuration settings"
+@Configuration
+
+// @EnableWebSocket tells Spring: "Turn ON WebSocket support in this app"
+@EnableWebSocket
+
+public class WebSocketConfig implements WebSocketConfigurer {
+
+    // Spring will call this method automatically during startup
+    @Override
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+
+        registry
+            .addHandler(interviewHandler(), "/interview-ws")
+            // ↑ What handler to use    ↑ URL path for WebSocket connection
+
+            .setAllowedOrigins("*");
+            // ↑ Allow connections from any origin (browser)
+            // In production you'd restrict this to your domain
+    }
+
+    @Bean
+    public InterviewWebSocketHandler interviewHandler() {
+        return new InterviewWebSocketHandler();
+        // Creates ONE instance of our handler (we write this next)
+    }
+}

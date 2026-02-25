@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Virtual Interview</title>
+    <style>
+        body { font-family: Arial; max-width: 600px; margin: 50px auto; text-align: center; background: #f0f4f8; }
+        h1 { color: #2c3e50; }
+        .status-box { padding: 15px; margin: 20px 0; border-radius: 8px; font-weight: bold; font-size: 1.1em; }
+        .status-idle       { background: #ecf0f1; color: #7f8c8d; }
+        .status-connected  { background: #d5f5e3; color: #1e8449; }
+        .status-recording  { background: #fde8e8; color: #c0392b; }
+        .status-saved      { background: #d6eaf8; color: #1a5276; }
+        button { padding: 15px 35px; font-size: 1.1em; border: none; border-radius: 8px; cursor: pointer; margin: 10px; }
+        #startBtn { background: #27ae60; color: white; }
+        #endBtn   { background: #e74c3c; color: white; }
+        button:disabled { background: #bdc3c7; cursor: not-allowed; }
+        .log-box { text-align: left; background: #2c3e50; color: #2ecc71; 
+                   padding: 15px; border-radius: 8px; height: 200px; 
+                   overflow-y: auto; font-family: monospace; font-size: 0.85em; margin-top: 20px; }
+        .chunk-counter { font-size: 2em; color: #e74c3c; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<h1>🎤 Virtual Interview System</h1>
+
+<div id="statusBox" class="status-box status-idle">
+    Status: IDLE — Click Start to begin
+</div>
+
+<div>
+    <button id="startBtn" onclick="startInterview()">▶ Start Interview</button>
+    <button id="endBtn"   onclick="endInterview()" disabled>⏹ End Interview</button>
+</div>
+
+<div class="chunk-counter">
+    Chunks Sent: <span id="chunkCount">0</span>
+</div>
+
+<div class="log-box" id="logBox">
+    [System Ready. Waiting for user to start interview...]
+</div>
+
+<script>
+    // ─────────────────────────────────────────
+    // Variables
+    // ─────────────────────────────────────────
+    let websocket        = null;   // WebSocket connection object
+    let mediaRecorder    = null;   // Browser's audio recorder
+    let sendInterval     = null;   // Timer to send every 5 seconds
+    let chunkCount       = 0;      // Counter for display
+
+    // ─────────────────────────────────────────
+    // LOGGING HELPER
+    // ─────────────────────────────────────────
+    function log(msg) {
+        const box = document.getElementById('logBox');
+        const time = new Date().toLocaleTimeString();
+        box.innerHTML += `\n[${time}] ${msg}`;
+        box.scrollTop = box.scrollHeight;
+    }
+
+    // ─────────────────────────────────────────
+    // STEP 1: Start Interview — Connect WebSocket
+    // ─────────────────────────────────────────
+    function startInterview() {
+        log("Connecting to server via WebSocket...");
+        setStatus("Connecting...", "status-idle");
+
+        // Create WebSocket connection to our Spring Boot BE
+        // ws:// = WebSocket protocol  (like http://)
+        websocket = new WebSocket("ws://localhost:8080/interview-ws");
+
+        // ── EVENT: Connection opened successfully ──
+        websocket.onopen = function() {
+            log("✅ WebSocket CONNECTED to server!");
+            setStatus("Connected! Starting microphone...", "status-connected");
+            startMicrophone();  // Now start recording audio
+        };
+
+        // ── EVENT: Message received FROM server ──
+        websocket.onmessage = function(event) {
+            log("📨 Server says: " + event.data);
+
+            if (event.data.startsWith("SAVED:")) {
+                setStatus("✅ Interview saved: " + event.data.replace("SAVED:", ""), "status-saved");
+            }
+        };
+
+        // ── EVENT: Connection closed ──
+        websocket.onclose = function() {
+            log("❌ WebSocket connection closed");
+            stopEverything();
+        };
+
+        // ── EVENT: Error ──
+        websocket.onerror = function(err) {
+            log("🔴 ERROR: " + err);
+        };
+    }
+
+    // ─────────────────────────────────────────
+    // STEP 2: Access Microphone & Start Recording
+    // ─────────────────────────────────────────
+    function startMicrophone() {
+        // Ask browser permission to use microphone
+        navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(function(stream) {
+            log("🎤 Microphone access granted. Recording...");
+            setStatus("🔴 RECORDING — Speak now!", "status-recording");
+
+            // Enable/disable buttons
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('endBtn').disabled   = false;
+
+            // Create MediaRecorder to capture audio
+            mediaRecorder = new MediaRecorder(stream);
+
+            // This event fires every time a chunk is ready
+            mediaRecorder.ondataavailable = function(event) {
+                if (event.data.size > 0 && websocket && websocket.readyState === WebSocket.OPEN) {
+                    // Convert audio blob to ArrayBuffer then send as binary
+                    event.data.arrayBuffer().then(function(buffer) {
+                        websocket.send(buffer);   // ← SENDS BINARY TO SPRING BOOT
+                        chunkCount++;
+                        document.getElementById('chunkCount').textContent = chunkCount;
+                        log("📤 Sent chunk #" + chunkCount + " (" + buffer.byteLength + " bytes)");
+                    });
+                }
+            };
+
+            // Start recording — collect a chunk every 5000ms (5 seconds)
+            mediaRecorder.start(5000);
+            log("⏱ Sending audio chunks every 5 seconds...");
+        })
+        .catch(function(err) {
+            log("🔴 Microphone error: " + err);
+            setStatus("Microphone access denied!", "status-idle");
+        });
+    }
+
+    // ─────────────────────────────────────────
+    // STEP 3: End Interview — Send command to BE
+    // ─────────────────────────────────────────
+    function endInterview() {
+        log("Stopping recording...");
+
+        // Stop the MediaRecorder (triggers final ondataavailable event)
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            mediaRecorder.stop();
+        }
+
+        // Wait 1 second to make sure last chunk is sent, then send END command
+        setTimeout(function() {
+            if (websocket && websocket.readyState === WebSocket.OPEN) {
+                log("📤 Sending END_INTERVIEW command to server...");
+                websocket.send("END_INTERVIEW");  // ← TEXT MESSAGE TO SPRING BOOT
+            }
+        }, 1000);
+
+        setStatus("Processing... Waiting for server to save file.", "status-connected");
+    }
+
+    // ─────────────────────────────────────────
+    // HELPER: Stop everything cleanly
+    // ─────────────────────────────────────────
+    function stopEverything() {
+        document.getElementById('startBtn').disabled = false;
+        document.getElementById('endBtn').disabled   = true;
+        chunkCount = 0;
+        document.getElementById('chunkCount').textContent = "0";
+    }
+
+    function setStatus(msg, cssClass) {
+        const box = document.getElementById('statusBox');
+        box.className = "status-box " + cssClass;
+        box.textContent = "Status: " + msg;
+    }
+</script>
+
+</body>
+</html>
