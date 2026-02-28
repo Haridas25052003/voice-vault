@@ -1,4 +1,4 @@
-package com.demo.ws;
+package com.demo.enums;
 
 public enum InterviewCommand {
     READY,
