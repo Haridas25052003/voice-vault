@@ -1,4 +1,4 @@
-package com.demo.interviewer_module;
+package com.demo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
