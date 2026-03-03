@@ -1,12 +1,10 @@
 package com.demo.service;
 
 import com.ai.interviewer.model.InterviewQuestion;
-import lombok.Data;
-import com.demo.model.*;
+import com.demo.model.InterviewQuestion;
 
 import java.util.List;
 
-@Data
 public class InterviewSession {
 
     private String sessionId;
@@ -28,5 +26,9 @@ public class InterviewSession {
     public boolean moveNext() {
         currentIndex++;
         return currentIndex < questions.size();
+    }
+
+    public String getSessionId() {
+        return sessionId;
     }
 }
