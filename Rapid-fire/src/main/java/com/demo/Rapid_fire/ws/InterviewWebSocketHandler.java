@@ -1,12 +1,13 @@
 package com.demo.Rapid_fire.ws;
 
-import com.ai.interviewer.dto.SocketMessage;
-import com.ai.interviewer.session.SessionManager;
-import com.ai.interviewer.session.InterviewSession;
+import com.demo.Rapid_fire.dto.SocketMessage;
+import com.demo.Rapid_fire.session.SessionManager;
+import com.demo.Rapid_fire.session.InterviewSession;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
+import org.springframework.web.socket.handler.BinaryWebSocketHandler;
 import org.springframework.web.socket.handler.BinaryWebSocketHandler;
 
 import java.io.IOException;
@@ -46,42 +47,55 @@ public class InterviewWebSocketHandler extends BinaryWebSocketHandler {
      * Handle text messages (commands)
      */
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) {
 
-        SocketMessage socketMessage =
-                objectMapper.readValue(message.getPayload(), SocketMessage.class);
+        try {
 
-        String command = socketMessage.getCommand();
+            SocketMessage socketMessage =
+                    objectMapper.readValue(message.getPayload(), SocketMessage.class);
 
-        String sessionId = session.getId();
+            String command = socketMessage.getCommand();
 
-        InterviewSession interviewSession = sessionManager.getSession(sessionId);
+            String sessionId = session.getId();
 
-        if (interviewSession == null) {
-            return;
-        }
+            InterviewSession interviewSession = sessionManager.getSession(sessionId);
 
-        switch (command) {
-
-            case "START_INTERVIEW":
-
+            if (interviewSession == null) {
                 sendMessage(session,
-                        new SocketMessage("INFO", "Interview started"));
+                        new SocketMessage("ERROR", "Session not found"));
+                return;
+            }
 
-                break;
+            switch (command) {
 
-            case "LONG_PAUSE":
+                case "START_INTERVIEW":
 
+                    sendMessage(session,
+                            new SocketMessage("INFO", "Interview started"));
+                    break;
+
+                case "LONG_PAUSE":
+
+                    sendMessage(session,
+                            new SocketMessage("INFO", "User stopped speaking"));
+                    break;
+
+                default:
+
+                    sendMessage(session,
+                            new SocketMessage("ERROR", "Unknown command"));
+            }
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            try {
                 sendMessage(session,
-                        new SocketMessage("INFO", "User stopped speaking"));
-
-                break;
-
-            default:
-
-                sendMessage(session,
-                        new SocketMessage("ERROR", "Unknown command"));
-
+                        new SocketMessage("ERROR", "Internal server error"));
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
         }
     }
 
