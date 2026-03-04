@@ -1,6 +1,6 @@
 package com.demo.Rapid_fire.config;
 
-import com.ai.interviewer.ws.InterviewWebSocketHandler;
+import com.demo.Rapid_fire.ws.InterviewWebSocketHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.*;
