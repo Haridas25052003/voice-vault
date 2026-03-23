@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Dynamic Data Table</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body class="container mt-5">
+
+<h2 class="text-center mb-4">User Data Dashboard</h2>
+
+<div class="text-center mb-4">
+    <button id="studentBtn" class="btn btn-primary me-2">Student</button>
+    <button id="parentBtn" class="btn btn-success me-2">Parent</button>
+    <button id="teacherBtn" class="btn btn-warning">Teacher</button>
+</div>
+
+<table class="table table-bordered table-striped text-center">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Info</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+</table>
+
+<script>
+
+let cache = {
+    student: null,
+    parent: null,
+    teacher: null
+};
+
+let currentType = null;
+
+// Mock APIs
+function getStudentData(callback) {
+    setTimeout(() => {
+        callback([
+            { id: 1, name: "Rahul", info: "BCA" },
+            { id: 2, name: "Amit", info: "MCA" }
+        ]);
+    }, 500);
+}
+
+function getParentData(callback) {
+    setTimeout(() => {
+        callback([
+            { id: 1, name: "Mr. Sharma", info: "Business" },
+            { id: 2, name: "Mrs. Patil", info: "Teacher" }
+        ]);
+    }, 500);
+}
+
+function getTeacherData(callback) {
+    setTimeout(() => {
+        callback([
+            { id: 1, name: "Prof. Rao", info: "Math" },
+            { id: 2, name: "Prof. Singh", info: "Science" }
+        ]);
+    }, 500);
+}
+
+// Render table
+function renderTable(data) {
+    let rows = "";
+
+    data.forEach(item => {
+        rows += `
+        <tr>
+            <td>${item.id}</td>
+            <td>${item.name}</td>
+            <td>${item.info}</td>
+            <td>
+                <button class="btn btn-danger btn-sm">Delete</button>
+                <button class="btn btn-info btn-sm">Edit</button>
+            </td>
+        </tr>`;
+    });
+
+    $("#tableBody").html(rows);
+}
+
+$(document).ready(function () {
+
+    $("#studentBtn").click(function () {
+        currentType = "student";
+
+        if (cache.student) {
+            renderTable(cache.student);
+        } else {
+            getStudentData(data => {
+                cache.student = data;
+                renderTable(data);
+            });
+        }
+    });
+
+    $("#parentBtn").click(function () {
+        currentType = "parent";
+
+        if (cache.parent) {
+            renderTable(cache.parent);
+        } else {
+            getParentData(data => {
+                cache.parent = data;
+                renderTable(data);
+            });
+        }
+    });
+
+    $("#teacherBtn").click(function () {
+        currentType = "teacher";
+
+        if (cache.teacher) {
+            renderTable(cache.teacher);
+        } else {
+            getTeacherData(data => {
+                cache.teacher = data;
+                renderTable(data);
+            });
+        }
+    });
+
+    // Delete
+    $(document).on("click", ".btn-danger", function () {
+
+        let row = $(this).closest("tr");
+        let id = parseInt(row.find("td:first").text());
+
+        row.remove();
+
+        if (currentType && cache[currentType]) {
+            cache[currentType] = cache[currentType].filter(item => item.id !== id);
+        }
+    });
+
+    // Edit
+    $(document).on("click", ".btn-info", function () {
+
+        let row = $(this).closest("tr");
+
+        let id = parseInt(row.find("td:eq(0)").text());
+        let name = row.find("td:eq(1)").text();
+        let info = row.find("td:eq(2)").text();
+
+        let newName = prompt("Enter new name", name);
+        let newInfo = prompt("Enter new info", info);
+
+        if (newName && newInfo) {
+
+            row.find("td:eq(1)").text(newName);
+            row.find("td:eq(2)").text(newInfo);
+
+            if (currentType && cache[currentType]) {
+                cache[currentType].forEach(item => {
+                    if (item.id === id) {
+                        item.name = newName;
+                        item.info = newInfo;
+                    }
+                });
+            }
+        }
+    });
+
+});
+
+</script>
+
+</body>
+</html>
