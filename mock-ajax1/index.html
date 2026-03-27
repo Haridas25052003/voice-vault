@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Admission Form</title>
 
@@ -9,22 +10,74 @@
     <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
+
 <body>
 
-<div class="container mt-5">
+    <div class="container mt-5">
 
-    <h2 class="text-center">Student Admission Form</h2>
-    <!-- Loader -->
-    <div id="loader" class="text-center">
-        <h4>Loading form...</h4>
+        <h2 class="text-center">Student Admission Form</h2>
+        <!-- Loader -->
+        <div id="loader" class="text-center">
+            <h4>Loading form...</h4>
+        </div>
+
+        <!-- Form Container -->
+        <div id="formContainer" style="display:none;">
+            <!-- Form will be rendered here -->
+        </div>
+
     </div>
 
-    <!-- Form Container -->
-    <div id="formContainer" style="display:none;">
-        <!-- Form will be rendered here -->
-    </div>
+    <script>
 
-</div>
+        $(document).ready(function () {
+            loadFormDefination();
+
+        });
+
+        function loadFormDefination() {
+
+            //show loader
+            $("#loader").show();
+            $("#formContainer").hide();
+
+            //mock ajax
+            setTimeout(function () {
+
+                const formDefinition = [
+                    {
+                        label: "Student Name",
+                        type: "text",
+                        required: true
+                    }
+                ];
+
+                renderForm(formDefinition);
+
+                $("#loader").hide();
+                $("#formContainer").show();
+
+            }, 2000);
+        }
+
+        function renderForm(fields) {
+
+            let html = "";
+
+            fields.forEach(function (field) {
+
+                html += `
+            <div class="form-group">
+                <label>${field.label}</label>
+                <input type="${field.type}" class="form-control" />
+            </div>
+        `;
+            });
+
+            $("#formContainer").html(html);
+        }
+    </script>
 
 </body>
+
 </html>
