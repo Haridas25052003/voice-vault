@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Visionaire — AI Image Studio</title>
+    <link rel="stylesheet" href="style.css"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+</head>
+<body>
+
+<!-- Background canvas for animated grain -->
+<canvas id="grain" aria-hidden="true"></canvas>
+
+<!-- Ambient orbs -->
+<div class="orb orb-1" aria-hidden="true"></div>
+<div class="orb orb-2" aria-hidden="true"></div>
+<div class="orb orb-3" aria-hidden="true"></div>
+
+<div class="app-wrapper">
+
+    <!-- ── Header ── -->
+    <header class="site-header">
+        <div class="logo">
+            <span class="logo-icon">◈</span>
+            <span class="logo-text">VISIONAIRE</span>
+        </div>
+        <div class="header-badge">DALL·E 3 · HD</div>
+    </header>
+
+    <!-- ── Hero ── -->
+    <section class="hero">
+        <div class="hero-label">TEXT TO IMAGE GENERATOR</div>
+        <h1 class="hero-title">
+            Turn words into<br/>
+            <em>visual reality</em>
+        </h1>
+        <p class="hero-sub">Describe anything. DALL·E 3 brings it to life at 1024×1024 HD resolution.</p>
+    </section>
+
+    <!-- ── Generator Card ── -->
+    <main class="generator-card" role="main">
+
+        <!-- Prompt Input -->
+        <div class="field-group">
+            <label class="field-label" for="prompt">
+                <span class="field-label-icon">✦</span> DESCRIBE YOUR IMAGE
+            </label>
+            <div class="textarea-wrapper">
+                    <textarea
+                            id="prompt"
+                            class="prompt-input"
+                            placeholder="A lone astronaut standing on a crimson Martian ridge at golden hour, hyper-realistic, volumetric light rays piercing the dusty atmosphere..."
+                            rows="4"
+                            maxlength="4000"
+                            aria-label="Image prompt"
+                    ></textarea>
+                <div class="char-counter"><span id="charCount">0</span> / 4000</div>
+            </div>
+        </div>
+
+        <!-- Style + Size Row -->
+        <div class="controls-row">
+            <div class="field-group field-group--half">
+                <label class="field-label" for="style">
+                    <span class="field-label-icon">◎</span> STYLE PRESET
+                </label>
+                <div class="select-wrapper">
+                    <select id="style" class="style-select" aria-label="Style preset">
+                        <option value="">— Let AI decide —</option>
+                        <option value="photorealistic, ultra-detailed, 8k">Photorealistic</option>
+                        <option value="cinematic, dramatic lighting, film grain, anamorphic">Cinematic</option>
+                        <option value="anime style, vibrant colors, studio ghibli inspired">Anime</option>
+                        <option value="oil painting, impressionist brushwork, canvas texture">Oil Painting</option>
+                        <option value="watercolor, soft washes, delicate linework">Watercolor</option>
+                        <option value="concept art, matte painting, sci-fi aesthetic">Concept Art</option>
+                        <option value="dark fantasy, gothic, moody atmosphere, high contrast">Dark Fantasy</option>
+                        <option value="minimalist, clean, geometric, pastel colors">Minimalist</option>
+                        <option value="cyberpunk, neon lights, rain-soaked streets, futuristic">Cyberpunk</option>
+                        <option value="vintage photograph, sepia tones, aged film">Vintage</option>
+                    </select>
+                    <span class="select-arrow">▾</span>
+                </div>
+            </div>
+
+            <div class="field-group field-group--half">
+                <label class="field-label" for="size">
+                    <span class="field-label-icon">⊞</span> RESOLUTION
+                </label>
+                <div class="select-wrapper">
+                    <select id="size" class="style-select" aria-label="Image size">
+                        <option value="1024x1024">1024 × 1024 — Square</option>
+                        <option value="1792x1024">1792 × 1024 — Landscape</option>
+                        <option value="1024x1792">1024 × 1792 — Portrait</option>
+                    </select>
+                    <span class="select-arrow">▾</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Generate Button -->
+        <button id="generateBtn" class="generate-btn" aria-label="Generate image">
+                <span class="btn-content">
+                    <span class="btn-icon">◈</span>
+                    <span class="btn-text">GENERATE IMAGE</span>
+                </span>
+            <span class="btn-shimmer" aria-hidden="true"></span>
+        </button>
+
+        <!-- ── Error Banner ── -->
+        <div id="errorBanner" class="error-banner" role="alert" aria-live="assertive" hidden>
+            <span class="error-icon">⚠</span>
+            <span id="errorMessage" class="error-text"></span>
+            <button class="error-close" id="closeError" aria-label="Dismiss error">✕</button>
+        </div>
+    </main>
+
+    <!-- ── Loading State ── -->
+    <div id="loadingState" class="loading-state" hidden aria-live="polite">
+        <div class="loading-visual">
+            <div class="loading-ring">
+                <div></div><div></div><div></div><div></div>
+            </div>
+            <div class="loading-core">◈</div>
+        </div>
+        <div class="loading-label">Generating your image</div>
+        <div class="loading-steps">
+            <span id="loadingStep" class="loading-step-text">Initializing DALL·E 3...</span>
+        </div>
+    </div>
+
+    <!-- ── Result Section ── -->
+    <section id="resultSection" class="result-section" hidden aria-live="polite">
+        <div class="result-header">
+            <div class="result-title">
+                <span class="result-dot"></span>
+                Generated Result
+            </div>
+            <div class="result-meta" id="resultMeta"></div>
+        </div>
+
+        <div class="result-frame">
+            <img
+                    id="generatedImage"
+                    class="result-image"
+                    src=""
+                    alt="AI generated image"
+                    loading="lazy"
+            />
+            <div class="result-overlay">
+                <a id="downloadBtn" class="overlay-btn" download="visionaire-image.png" title="Download">
+                    ↓ DOWNLOAD
+                </a>
+                <button id="copyUrlBtn" class="overlay-btn" title="Copy URL">
+                    ⧉ COPY URL
+                </button>
+            </div>
+        </div>
+
+        <!-- Revised Prompt -->
+        <div class="revised-prompt-box" id="revisedPromptBox" hidden>
+            <div class="revised-prompt-label">✦ AI-Revised Prompt</div>
+            <p class="revised-prompt-text" id="revisedPromptText"></p>
+        </div>
+    </section>
+
+    <!-- ── Footer ── -->
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <span>Powered by OpenAI DALL·E 3</span>
+            <span class="footer-sep">·</span>
+            <span>Spring Boot Backend</span>
+            <span class="footer-sep">·</span>
+            <span>HD Quality</span>
+        </div>
+    </footer>
+
+</div><!-- /app-wrapper -->
+
+<script src="script.js"></script>
+</body>
+</html>
