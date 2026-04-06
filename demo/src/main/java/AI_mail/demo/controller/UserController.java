@@ -2,6 +2,7 @@ package AI_mail.demo.controller;
 
 import AI_mail.demo.entity.User;
 import AI_mail.demo.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,8 +19,10 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user){
-        return ResponseEntity.ok(userService.registerUser(user));
+    public ResponseEntity<?> register(
+            @Valid @RequestBody UserRequestDto dto) {
+
+        return ResponseEntity.ok(userService.registerUser(dto));
     }
 
 }
