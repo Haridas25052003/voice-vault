@@ -1,182 +1,342 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Visionaire — AI Image Studio</title>
     <link rel="stylesheet" href="style.css"/>
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 </head>
 <body>
 
-<!-- Background canvas for animated grain -->
-<canvas id="grain" aria-hidden="true"></canvas>
+<canvas id="bg-canvas" aria-hidden="true"></canvas>
 
-<!-- Ambient orbs -->
-<div class="orb orb-1" aria-hidden="true"></div>
-<div class="orb orb-2" aria-hidden="true"></div>
-<div class="orb orb-3" aria-hidden="true"></div>
+<div class="layout">
 
-<div class="app-wrapper">
-
-    <!-- ── Header ── -->
-    <header class="site-header">
-        <div class="logo">
-            <span class="logo-icon">◈</span>
-            <span class="logo-text">VISIONAIRE</span>
-        </div>
-        <div class="header-badge">DALL·E 3 · HD</div>
-    </header>
-
-    <!-- ── Hero ── -->
-    <section class="hero">
-        <div class="hero-label">TEXT TO IMAGE GENERATOR</div>
-        <h1 class="hero-title">
-            Turn words into<br/>
-            <em>visual reality</em>
-        </h1>
-        <p class="hero-sub">Describe anything. DALL·E 3 brings it to life at 1024×1024 HD resolution.</p>
-    </section>
-
-    <!-- ── Generator Card ── -->
-    <main class="generator-card" role="main">
-
-        <!-- Prompt Input -->
-        <div class="field-group">
-            <label class="field-label" for="prompt">
-                <span class="field-label-icon">✦</span> DESCRIBE YOUR IMAGE
-            </label>
-            <div class="textarea-wrapper">
-                    <textarea
-                            id="prompt"
-                            class="prompt-input"
-                            placeholder="A lone astronaut standing on a crimson Martian ridge at golden hour, hyper-realistic, volumetric light rays piercing the dusty atmosphere..."
-                            rows="4"
-                            maxlength="4000"
-                            aria-label="Image prompt"
-                    ></textarea>
-                <div class="char-counter"><span id="charCount">0</span> / 4000</div>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-mark">V</div>
+            <div class="logo-info">
+                <span class="logo-name">Visionaire</span>
+                <span class="logo-ver">DALL·E 3 Studio</span>
             </div>
         </div>
 
-        <!-- Style + Size Row -->
-        <div class="controls-row">
-            <div class="field-group field-group--half">
-                <label class="field-label" for="style">
-                    <span class="field-label-icon">◎</span> STYLE PRESET
-                </label>
-                <div class="select-wrapper">
-                    <select id="style" class="style-select" aria-label="Style preset">
-                        <option value="">— Let AI decide —</option>
-                        <option value="photorealistic, ultra-detailed, 8k">Photorealistic</option>
-                        <option value="cinematic, dramatic lighting, film grain, anamorphic">Cinematic</option>
-                        <option value="anime style, vibrant colors, studio ghibli inspired">Anime</option>
-                        <option value="oil painting, impressionist brushwork, canvas texture">Oil Painting</option>
-                        <option value="watercolor, soft washes, delicate linework">Watercolor</option>
-                        <option value="concept art, matte painting, sci-fi aesthetic">Concept Art</option>
-                        <option value="dark fantasy, gothic, moody atmosphere, high contrast">Dark Fantasy</option>
-                        <option value="minimalist, clean, geometric, pastel colors">Minimalist</option>
-                        <option value="cyberpunk, neon lights, rain-soaked streets, futuristic">Cyberpunk</option>
-                        <option value="vintage photograph, sepia tones, aged film">Vintage</option>
-                    </select>
-                    <span class="select-arrow">▾</span>
+        <nav class="sidebar-nav">
+            <button class="nav-item active" data-tab="generate">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Generate
+            </button>
+            <button class="nav-item" data-tab="gallery">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                Gallery
+            </button>
+            <button class="nav-item" data-tab="history">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                History
+            </button>
+        </nav>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">Quick Styles</div>
+            <div class="quick-styles">
+                <button class="quick-style" data-style="photorealistic, ultra-detailed, 8k">📷 Photo</button>
+                <button class="quick-style" data-style="anime style, vibrant, studio ghibli">🎌 Anime</button>
+                <button class="quick-style" data-style="oil painting, impressionist">🎨 Paint</button>
+                <button class="quick-style" data-style="cinematic, dramatic lighting, film grain">🎬 Cinema</button>
+                <button class="quick-style" data-style="cyberpunk, neon lights, rain-soaked">⚡ Cyber</button>
+                <button class="quick-style" data-style="watercolor, soft washes, delicate">💧 Water</button>
+                <button class="quick-style" data-style="dark fantasy, gothic, moody">🌑 Fantasy</button>
+                <button class="quick-style" data-style="3D render, octane, subsurface scattering">🎲 3D</button>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-label">Inspire Me</div>
+            <button class="inspire-btn" id="inspireBtn">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                Random Prompt
+            </button>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="model-badge">
+                <span class="model-dot"></span>
+                DALL·E 3 · HD Active
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- Tab: Generate -->
+        <div class="tab-content active" id="tab-generate">
+            <div class="main-header">
+                <h1 class="main-title">Create Image</h1>
+                <div class="header-pills">
+                    <span class="pill pill-green">● Online</span>
+                    <span class="pill">DALL·E 3</span>
                 </div>
             </div>
 
-            <div class="field-group field-group--half">
-                <label class="field-label" for="size">
-                    <span class="field-label-icon">⊞</span> RESOLUTION
-                </label>
-                <div class="select-wrapper">
-                    <select id="size" class="style-select" aria-label="Image size">
-                        <option value="1024x1024">1024 × 1024 — Square</option>
-                        <option value="1792x1024">1792 × 1024 — Landscape</option>
-                        <option value="1024x1792">1024 × 1792 — Portrait</option>
-                    </select>
-                    <span class="select-arrow">▾</span>
+            <!-- Prompt -->
+            <div class="card prompt-card">
+                <div class="card-label">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    PROMPT
+                </div>
+                <textarea id="prompt" class="prompt-input" placeholder="Describe your image in detail... e.g. A lone astronaut on a crimson Martian ridge at golden hour, hyper-realistic, volumetric light rays..." rows="5" maxlength="4000"></textarea>
+                <div class="prompt-footer">
+                    <div class="char-bar-wrap"><div class="char-bar" id="charBar"></div></div>
+                    <span class="char-count"><span id="charCount">0</span> / 4000</span>
+                </div>
+            </div>
+
+            <!-- Settings Grid -->
+            <div class="settings-grid">
+
+                <div class="card setting-card">
+                    <div class="card-label">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93L17.66 6.34M6.34 17.66L4.93 19.07M4.93 4.93L6.34 6.34M17.66 17.66L19.07 19.07M2 12H4M20 12H22M12 2V4M12 20V22"/></svg>
+                        ART STYLE
+                    </div>
+                    <div class="select-wrap">
+                        <select id="style" class="styled-select">
+                            <option value="">Auto (AI decides)</option>
+                            <option value="photorealistic, ultra-detailed, 8k, DSLR">Photorealistic</option>
+                            <option value="cinematic, dramatic lighting, anamorphic lens, film grain">Cinematic</option>
+                            <option value="anime style, vibrant colors, studio ghibli inspired">Anime / Manga</option>
+                            <option value="oil painting, impressionist brushwork, canvas texture">Oil Painting</option>
+                            <option value="watercolor, soft washes, delicate linework">Watercolor</option>
+                            <option value="concept art, matte painting, sci-fi aesthetic">Concept Art</option>
+                            <option value="dark fantasy, gothic, moody atmosphere, high contrast">Dark Fantasy</option>
+                            <option value="minimalist, geometric, pastel colors, clean lines">Minimalist</option>
+                            <option value="cyberpunk, neon lights, rain-soaked streets, futuristic">Cyberpunk</option>
+                            <option value="vintage photograph, sepia tones, aged film, retro">Vintage / Retro</option>
+                            <option value="3D render, octane render, subsurface scattering, PBR">3D Render</option>
+                            <option value="comic book, bold outlines, halftone dots, ink">Comic Book</option>
+                            <option value="pixel art, 16-bit, retro video game aesthetic">Pixel Art</option>
+                            <option value="abstract expressionism, surrealist, dreamlike">Abstract / Surreal</option>
+                            <option value="pencil sketch, graphite drawing, hand-drawn">Pencil Sketch</option>
+                        </select>
+                        <svg class="select-arrow" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                </div>
+
+                <div class="card setting-card">
+                    <div class="card-label">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                        CAMERA ANGLE
+                    </div>
+                    <div class="select-wrap">
+                        <select id="camera" class="styled-select">
+                            <option value="">Default View</option>
+                            <option value="close-up shot, macro photography">Close-up / Macro</option>
+                            <option value="wide angle shot, expansive view, 16mm">Wide Angle</option>
+                            <option value="aerial view, bird's eye, drone shot">Aerial / Drone</option>
+                            <option value="low angle shot, worm's eye view">Low Angle</option>
+                            <option value="portrait shot, 85mm lens, shallow depth of field, bokeh">Portrait Bokeh</option>
+                            <option value="fisheye lens, extreme wide angle distortion">Fisheye</option>
+                            <option value="tilt-shift photography, miniature effect">Tilt-Shift</option>
+                            <option value="first-person POV, immersive perspective">First Person POV</option>
+                        </select>
+                        <svg class="select-arrow" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                </div>
+
+                <div class="card setting-card">
+                    <div class="card-label">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+                        LIGHTING
+                    </div>
+                    <div class="select-wrap">
+                        <select id="lighting" class="styled-select">
+                            <option value="">Natural Light</option>
+                            <option value="golden hour lighting, warm low sunlight">Golden Hour</option>
+                            <option value="dramatic studio lighting, hard shadows, Rembrandt">Studio Dramatic</option>
+                            <option value="soft diffused lighting, overcast sky, even">Soft / Overcast</option>
+                            <option value="neon light, colorful artificial lighting, night">Neon Lights</option>
+                            <option value="moonlight, night scene, cool blue tones">Moonlight</option>
+                            <option value="volumetric light rays, god rays, atmospheric">Volumetric Rays</option>
+                            <option value="backlit, silhouette, rim lighting, contre-jour">Backlit</option>
+                            <option value="candlelight, warm flickering, intimate">Candlelight</option>
+                        </select>
+                        <svg class="select-arrow" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                </div>
+
+                <div class="card setting-card">
+                    <div class="card-label">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 011.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+                        COLOR MOOD
+                    </div>
+                    <div class="select-wrap">
+                        <select id="colorMood" class="styled-select">
+                            <option value="">No Preference</option>
+                            <option value="warm color palette, orange amber red tones">Warm Tones</option>
+                            <option value="cool color palette, blue teal indigo tones">Cool Tones</option>
+                            <option value="black and white, monochromatic, grayscale">Monochrome</option>
+                            <option value="vibrant, saturated, high contrast bold colors">Vibrant</option>
+                            <option value="muted, desaturated, analog film fade">Muted / Faded</option>
+                            <option value="pastel colors, soft gentle palette">Pastel</option>
+                            <option value="earth tones, terracotta, ochre, sienna">Earth Tones</option>
+                        </select>
+                        <svg class="select-arrow" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Resolution Picker -->
+            <div class="card res-card">
+                <div class="card-label">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>
+                    RESOLUTION
+                </div>
+                <div class="resolution-btns" id="resolutionBtns">
+                    <button class="res-btn active" data-size="1024x1024">
+                        <div class="res-thumb res-square"></div>
+                        <div class="res-info">
+                            <span class="res-name">Square</span>
+                            <span class="res-dim">1024 × 1024</span>
+                        </div>
+                    </button>
+                    <button class="res-btn" data-size="1792x1024">
+                        <div class="res-thumb res-land"></div>
+                        <div class="res-info">
+                            <span class="res-name">Landscape</span>
+                            <span class="res-dim">1792 × 1024</span>
+                        </div>
+                    </button>
+                    <button class="res-btn" data-size="1024x1792">
+                        <div class="res-thumb res-port"></div>
+                        <div class="res-info">
+                            <span class="res-name">Portrait</span>
+                            <span class="res-dim">1024 × 1792</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Negative Prompt -->
+            <div class="card neg-card">
+                <div class="card-label">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                    NEGATIVE PROMPT <span class="optional-tag">optional</span>
+                </div>
+                <input type="text" id="negativePrompt" class="neg-input" placeholder="What to avoid: blurry, low quality, distorted faces, watermark, text..." maxlength="1000"/>
+            </div>
+
+            <!-- Generate -->
+            <button id="generateBtn" class="generate-btn">
+                <svg class="btn-svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <span id="btnText">Generate Image</span>
+            </button>
+
+            <!-- Error Banner -->
+            <div id="errorBanner" class="error-banner" hidden>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span id="errorMessage"></span>
+                <button id="closeError" class="error-close">✕</button>
+            </div>
+
+            <!-- Loading -->
+            <div id="loadingState" class="loading-state" hidden>
+                <div class="loading-rings">
+                    <div class="lr lr1"></div>
+                    <div class="lr lr2"></div>
+                    <div class="lr lr3"></div>
+                </div>
+                <div class="loading-text">
+                    <div class="loading-title">Generating your image...</div>
+                    <div class="loading-step" id="loadingStep">Sending to DALL·E 3</div>
+                </div>
+                <div class="loading-progress"><div class="loading-bar" id="loadingBar"></div></div>
+            </div>
+
+            <!-- Result -->
+            <div id="resultSection" class="result-section" hidden>
+                <div class="result-header">
+                    <div class="result-label"><span class="result-dot"></span> Result</div>
+                    <div class="result-actions-top">
+                        <button id="regenerateBtn" class="action-btn">↺ Regenerate</button>
+                        <button id="copyUrlBtn" class="action-btn">⧉ Copy URL</button>
+                        <a id="downloadBtn" class="action-btn" download="visionaire.png">↓ Download</a>
+                    </div>
+                </div>
+                <div class="result-frame">
+                    <img id="generatedImage" class="result-image" src="" alt="Generated"/>
+                    <div class="result-meta-bar" id="resultMeta"></div>
+                </div>
+                <div class="revised-prompt" id="revisedPromptBox" hidden>
+                    <div class="revised-label">✦ AI Enhanced Prompt</div>
+                    <p id="revisedPromptText"></p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Tab: Gallery -->
+        <div class="tab-content" id="tab-gallery">
+            <div class="main-header">
+                <h1 class="main-title">Gallery</h1>
+                <span class="pill" id="galleryCount">0 images</span>
+            </div>
+            <div id="galleryGrid" class="gallery-grid">
+                <div class="empty-state">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    <p>Generate some images first!</p>
                 </div>
             </div>
         </div>
 
-        <!-- Generate Button -->
-        <button id="generateBtn" class="generate-btn" aria-label="Generate image">
-                <span class="btn-content">
-                    <span class="btn-icon">◈</span>
-                    <span class="btn-text">GENERATE IMAGE</span>
-                </span>
-            <span class="btn-shimmer" aria-hidden="true"></span>
-        </button>
-
-        <!-- ── Error Banner ── -->
-        <div id="errorBanner" class="error-banner" role="alert" aria-live="assertive" hidden>
-            <span class="error-icon">⚠</span>
-            <span id="errorMessage" class="error-text"></span>
-            <button class="error-close" id="closeError" aria-label="Dismiss error">✕</button>
+        <!-- Tab: History -->
+        <div class="tab-content" id="tab-history">
+            <div class="main-header">
+                <h1 class="main-title">Prompt History</h1>
+                <button class="clear-btn" id="clearHistory">Clear All</button>
+            </div>
+            <div id="historyList" class="history-list">
+                <div class="empty-state">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <p>No history yet.</p>
+                </div>
+            </div>
         </div>
+
     </main>
 
-    <!-- ── Loading State ── -->
-    <div id="loadingState" class="loading-state" hidden aria-live="polite">
-        <div class="loading-visual">
-            <div class="loading-ring">
-                <div></div><div></div><div></div><div></div>
+    <!-- PREVIEW PANEL -->
+    <aside class="preview-panel" id="previewPanel">
+        <div class="preview-header">
+            <span class="preview-title">Preview</span>
+            <button class="panel-close" id="panelClose">✕</button>
+        </div>
+        <div class="preview-body" id="previewBody">
+            <div class="preview-placeholder" id="previewPlaceholder">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                <p>Your image will appear here</p>
             </div>
-            <div class="loading-core">◈</div>
+            <img id="previewImage" class="preview-img" src="" alt="" hidden/>
         </div>
-        <div class="loading-label">Generating your image</div>
-        <div class="loading-steps">
-            <span id="loadingStep" class="loading-step-text">Initializing DALL·E 3...</span>
+        <div class="preview-stats" id="previewStats" hidden>
+            <div class="stat-row"><span class="stat-key">Model</span><span class="stat-val" id="statModel">—</span></div>
+            <div class="stat-row"><span class="stat-key">Size</span><span class="stat-val" id="statSize">—</span></div>
+            <div class="stat-row"><span class="stat-key">Quality</span><span class="stat-val">HD</span></div>
+            <div class="stat-row"><span class="stat-key">Generated</span><span class="stat-val" id="statTime">—</span></div>
         </div>
-    </div>
+    </aside>
+</div>
 
-    <!-- ── Result Section ── -->
-    <section id="resultSection" class="result-section" hidden aria-live="polite">
-        <div class="result-header">
-            <div class="result-title">
-                <span class="result-dot"></span>
-                Generated Result
-            </div>
-            <div class="result-meta" id="resultMeta"></div>
-        </div>
-
-        <div class="result-frame">
-            <img
-                    id="generatedImage"
-                    class="result-image"
-                    src=""
-                    alt="AI generated image"
-                    loading="lazy"
-            />
-            <div class="result-overlay">
-                <a id="downloadBtn" class="overlay-btn" download="visionaire-image.png" title="Download">
-                    ↓ DOWNLOAD
-                </a>
-                <button id="copyUrlBtn" class="overlay-btn" title="Copy URL">
-                    ⧉ COPY URL
-                </button>
-            </div>
-        </div>
-
-        <!-- Revised Prompt -->
-        <div class="revised-prompt-box" id="revisedPromptBox" hidden>
-            <div class="revised-prompt-label">✦ AI-Revised Prompt</div>
-            <p class="revised-prompt-text" id="revisedPromptText"></p>
-        </div>
-    </section>
-
-    <!-- ── Footer ── -->
-    <footer class="site-footer">
-        <div class="footer-inner">
-            <span>Powered by OpenAI DALL·E 3</span>
-            <span class="footer-sep">·</span>
-            <span>Spring Boot Backend</span>
-            <span class="footer-sep">·</span>
-            <span>HD Quality</span>
-        </div>
-    </footer>
-
-</div><!-- /app-wrapper -->
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" hidden>
+    <div class="lightbox-overlay" id="lightboxOverlay"></div>
+    <img class="lightbox-img" id="lightboxImg" src="" alt=""/>
+    <button class="lightbox-close" id="lightboxClose">✕</button>
+</div>
 
 <script src="script.js"></script>
 </body>
