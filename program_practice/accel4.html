@@ -1,0 +1,724 @@
+import { useState } from "react";
+
+const sections = [
+  { id: "intro", label: "👋 Introduction", icon: "👋" },
+  { id: "resume", label: "📄 Resume Q&A", icon: "📄" },
+  { id: "java", label: "☕ Java & OOP", icon: "☕" },
+  { id: "spring", label: "🌱 Spring Boot", icon: "🌱" },
+  { id: "hibernate", label: "🗄️ Hibernate/JPA", icon: "🗄️" },
+  { id: "api", label: "🔗 REST API", icon: "🔗" },
+  { id: "sql", label: "🧮 SQL", icon: "🧮" },
+  { id: "projects", label: "🚀 Projects", icon: "🚀" },
+  { id: "company", label: "🏢 About Accel4", icon: "🏢" },
+  { id: "hr", label: "🎯 HR & Closing", icon: "🎯" },
+];
+
+const data = {
+  intro: {
+    title: "Self Introduction",
+    subtitle: "Your first 60 seconds — make it count",
+    content: [
+      {
+        type: "script",
+        label: "✅ Recommended Introduction Script",
+        text: `"Good morning/afternoon! My name is Haridas Shinde, a Computer Science Engineering graduate from Babasaheb Naik College of Engineering, Pusad, with a CGPA of 8.6.
+
+My core strength is backend development — I've built multiple real-world applications using Java, Spring Boot, Hibernate/JPA, and REST APIs. During my internship at Insta IQ, I worked on full-stack modules, integrated RESTful APIs, and collaborated using Git in a team environment.
+
+Some projects I'm proud of include an AI-powered Job Application Mail Generator using Spring Boot and AI APIs, an Online Banking System, and a Blog Platform with role-based access control.
+
+I also have a good understanding of SQL, MVC Architecture, and layered application design (Controller-Service-Repository).
+
+I'm genuinely excited about the Associate Consultant role at Accel4 Technologies. Your work in SAP S/4HANA transformations and AI/ML product development for industries like semiconductor and med-tech is something I find very compelling — and I'm ready to learn fast and contribute.
+
+That's a quick overview about me. I'd love to share more as we go!"`
+      },
+      {
+        type: "tips",
+        label: "💡 Tips for Delivery",
+        items: [
+          "Keep it to 60–90 seconds — do NOT ramble",
+          "Speak clearly and at a moderate pace",
+          "Make eye contact (or look at the camera for virtual)",
+          "End with enthusiasm about the company — interviewers love it",
+          "Don't just list your resume — tell a small story"
+        ]
+      },
+      {
+        type: "warning",
+        label: "⚠️ Common Mistakes to Avoid",
+        items: [
+          "Don't start with 'I am from Maharashtra...' — they don't care about your city first",
+          "Don't say 'I am a fresher and I don't have much experience'",
+          "Don't read from a paper — memorize the structure, not word-for-word",
+          "Don't forget to mention why you applied to THIS company"
+        ]
+      }
+    ]
+  },
+
+  resume: {
+    title: "Resume-Based Questions",
+    subtitle: "Questions directly pulled from your resume — be ready for all of these",
+    content: [
+      {
+        type: "qa",
+        label: "Common Resume Questions",
+        items: [
+          {
+            q: "Walk me through your resume.",
+            a: "Same as your self-intro — cover your education, internship, and key projects in 2 minutes. Emphasize Java + Spring Boot experience."
+          },
+          {
+            q: "Tell me about your internship at Insta IQ.",
+            a: "At Insta IQ I worked on frontend modules using HTML, CSS, JavaScript and React. I integrated RESTful APIs to connect the UI with backend services and tested them using Postman. I also fixed UI bugs, improved usability, and learned to work with version control using Git and GitHub in a real team environment."
+          },
+          {
+            q: "Why did you choose Java and Spring Boot?",
+            a: "Java is a strongly-typed, OOP language with a massive ecosystem and enterprise-grade reliability. Spring Boot makes it very easy to build production-ready REST APIs with minimal configuration. I started with core Java, moved to Spring MVC, and found Spring Boot's auto-configuration and embedded server model ideal for rapid backend development."
+          },
+          {
+            q: "What is your CGPA and are you satisfied with it?",
+            a: "My CGPA is 8.6. I'm happy with it — but more importantly, I've complemented academics with hands-on projects and real internship experience. I believe practical skills matter as much as grades."
+          },
+          {
+            q: "You have a Java background. Why are you applying to an SAP consulting role?",
+            a: "SAP consulting, especially in AI/ML Product Development and Data Services tracks, heavily involves technical skills including Java, APIs, and data integration. My Java + Spring Boot + REST API background gives me a strong foundation to quickly learn SAP BTP, ABAP basics, or data tools like Databricks and Snowflake. I'm a fast learner and I'm excited about the sponsored certification path Accel4 offers."
+          },
+          {
+            q: "Which track would you prefer — SAP Functional, Data Services, or AI/ML Product Dev?",
+            a: "Given my background in Java, REST APIs, and building AI-integrated apps (like my AI Job Mail Generator), I'm most aligned with the AI/ML Product Development track. I'm also comfortable with Data Services given my SQL and database experience. I'm open to Accel4's recommendation based on business needs."
+          },
+          {
+            q: "What certifications do you have?",
+            a: "I have completed certifications in Software Engineering from Goldman Sachs Virtual Program, Full Stack Java Development from Symbiosis University, Java from NPTEL, Java & SQL Training from ExcelR, Core Java from Naresh IT, and UI Development from Udemy."
+          }
+        ]
+      }
+    ]
+  },
+
+  java: {
+    title: "Java & OOP Concepts",
+    subtitle: "Core Java questions — expect at least 5–8 of these",
+    content: [
+      {
+        type: "qa",
+        label: "OOP Fundamentals",
+        items: [
+          {
+            q: "What are the 4 pillars of OOP?",
+            a: "1. Encapsulation — Wrapping data and methods in a class, hiding internal state. E.g., private fields with getters/setters.\n2. Inheritance — A class inherits properties/methods from a parent class using 'extends'.\n3. Polymorphism — Same method name behaves differently. Compile-time (overloading), Runtime (overriding).\n4. Abstraction — Hiding implementation, exposing only what's needed. Done via abstract classes or interfaces."
+          },
+          {
+            q: "What is the difference between an abstract class and an interface?",
+            a: "Abstract Class: Can have both abstract and concrete methods. Supports constructors. Single inheritance only. Use when classes share common behavior.\nInterface: All methods are abstract by default (Java 8+ allows default/static methods). No constructors. Supports multiple implementation. Use to define a contract.\nKey rule: 'Is-a' relationship → abstract class. 'Can-do' / capability → interface."
+          },
+          {
+            q: "What is method overloading vs overriding?",
+            a: "Overloading (Compile-time polymorphism): Same method name, different parameters in the SAME class.\nOverriding (Runtime polymorphism): Same method name and signature in PARENT and CHILD class. Child class provides its own implementation."
+          },
+          {
+            q: "What is the difference between == and .equals()?",
+            a: "== compares reference (memory address) for objects, and value for primitives.\n.equals() compares content/value. For String: 'hello'.equals('hello') → true. Always use .equals() for object comparison."
+          },
+          {
+            q: "What is final, finally, and finalize?",
+            a: "final: Keyword — prevents inheritance (class), overriding (method), or reassignment (variable).\nfinally: Block in try-catch — always executes regardless of exception.\nfinalize(): Method in Object class — called by GC before object is destroyed. Deprecated in Java 9+."
+          },
+          {
+            q: "What is the difference between ArrayList and LinkedList?",
+            a: "ArrayList: Backed by array. Fast random access O(1). Slow insert/delete in middle O(n).\nLinkedList: Doubly linked nodes. Slow access O(n). Fast insert/delete at ends O(1). Use ArrayList for frequent reads, LinkedList for frequent insertions/deletions."
+          },
+          {
+            q: "What is a HashMap? How does it work internally?",
+            a: "HashMap stores key-value pairs. Internally it uses an array of buckets. The key's hashCode() determines the bucket index. If two keys hash to the same bucket (collision), Java uses chaining (LinkedList/TreeNode in Java 8+). Get/Put is O(1) average, O(n) worst case."
+          },
+          {
+            q: "What is Exception Handling in Java?",
+            a: "Java uses try-catch-finally blocks. Checked exceptions (e.g., IOException) must be handled at compile time. Unchecked exceptions (RuntimeException, NullPointerException) don't. Custom exceptions can be created by extending Exception or RuntimeException."
+          },
+          {
+            q: "What are Java 8 features you know?",
+            a: "Lambda Expressions, Functional Interfaces, Stream API, Optional class, Default and Static methods in interfaces, Method References, new Date/Time API (LocalDate, LocalDateTime)."
+          }
+        ]
+      }
+    ]
+  },
+
+  spring: {
+    title: "Spring Boot",
+    subtitle: "The heart of your technical experience — know this well",
+    content: [
+      {
+        type: "qa",
+        label: "Spring Boot Interview Questions",
+        items: [
+          {
+            q: "What is Spring Boot and how is it different from Spring?",
+            a: "Spring is a comprehensive framework requiring lots of configuration. Spring Boot is built ON TOP of Spring and provides: Auto-configuration (no boilerplate XML), Embedded servers (Tomcat built-in), Starter dependencies (spring-boot-starter-web, etc.), and Production-ready features. Spring Boot follows 'convention over configuration'."
+          },
+          {
+            q: "What are Spring Boot annotations you have used?",
+            a: "@SpringBootApplication — entry point, combines @Configuration + @EnableAutoConfiguration + @ComponentScan\n@RestController — marks class as REST controller\n@RequestMapping, @GetMapping, @PostMapping, @PutMapping, @DeleteMapping\n@Autowired — dependency injection\n@Service, @Repository, @Component — stereotype annotations\n@Entity, @Table, @Id, @GeneratedValue — JPA annotations\n@PathVariable, @RequestParam, @RequestBody"
+          },
+          {
+            q: "What is Dependency Injection and IoC?",
+            a: "Inversion of Control (IoC): The Spring container manages the lifecycle of objects instead of the programmer. Dependency Injection: Dependencies are 'injected' into a class by the container rather than the class creating them. Types: Constructor Injection (preferred), Setter Injection, Field Injection (@Autowired). This promotes loose coupling and easier testing."
+          },
+          {
+            q: "What is the difference between @Controller and @RestController?",
+            a: "@Controller returns a view (HTML page via template engines like Thymeleaf). @RestController = @Controller + @ResponseBody — returns data directly as JSON/XML. You've used @RestController in your APIs."
+          },
+          {
+            q: "Explain the MVC Architecture in Spring Boot.",
+            a: "Model — Data layer (entities, DTOs)\nView — Presentation layer (HTML, JSON response)\nController — Handles HTTP requests, delegates to service\nService — Business logic\nRepository — Database operations via JPA\nRequest flow: Client → Controller → Service → Repository → DB → back up the chain."
+          },
+          {
+            q: "What is application.properties in Spring Boot?",
+            a: "The main config file. Used to configure: server port, database URL (spring.datasource.url), JPA settings (spring.jpa.hibernate.ddl-auto), application name, and custom properties. Spring Boot also supports application.yml as an alternative."
+          },
+          {
+            q: "How do you handle exceptions globally in Spring Boot?",
+            a: "Using @ControllerAdvice + @ExceptionHandler. Create a class annotated with @ControllerAdvice and define methods with @ExceptionHandler(SomeException.class) that return appropriate HTTP responses. This centralizes error handling across all controllers."
+          },
+          {
+            q: "What is @Transactional? Have you used it?",
+            a: "@Transactional ensures a method runs inside a database transaction. If any operation fails, all changes are rolled back. It's typically placed on service layer methods. Spring Boot manages the transaction lifecycle automatically via the @Transactional annotation."
+          }
+        ]
+      }
+    ]
+  },
+
+  hibernate: {
+    title: "Hibernate / JPA",
+    subtitle: "You've used this in almost every project — own it",
+    content: [
+      {
+        type: "qa",
+        label: "Hibernate & JPA Questions",
+        items: [
+          {
+            q: "What is Hibernate? What is JPA?",
+            a: "JPA (Java Persistence API) is a specification/interface for ORM in Java. Hibernate is the most popular implementation of JPA. Together they allow you to map Java objects (entities) to database tables, eliminating raw SQL for most CRUD operations. Spring Data JPA is a Spring layer on top of JPA that further simplifies data access."
+          },
+          {
+            q: "What is ORM (Object Relational Mapping)?",
+            a: "ORM maps Java classes to database tables. Instead of writing SQL, you work with Java objects and Hibernate generates the SQL. Example: A 'User' class maps to a 'users' table. Field 'name' maps to 'name' column. This reduces boilerplate code significantly."
+          },
+          {
+            q: "Explain @Entity, @Table, @Id, @GeneratedValue.",
+            a: "@Entity — marks a class as a JPA entity (table)\n@Table(name='users') — specifies table name\n@Id — marks the primary key field\n@GeneratedValue(strategy=GenerationType.IDENTITY) — auto-increments the ID\n@Column — maps a field to a specific column"
+          },
+          {
+            q: "What are the different relationships in JPA?",
+            a: "@OneToOne — One user has one profile\n@OneToMany — One user has many orders\n@ManyToOne — Many orders belong to one user\n@ManyToMany — Students and courses\nThese define table joins and foreign key relationships automatically."
+          },
+          {
+            q: "What is the difference between save() and saveAndFlush() in JPA?",
+            a: "save() — Persists the entity but may not immediately write to DB (deferred within transaction).\nsaveAndFlush() — Persists AND immediately flushes to DB, synchronizing state. Useful when you need to verify the DB state within the same transaction."
+          },
+          {
+            q: "What is Lazy vs Eager loading?",
+            a: "Lazy loading (default for @OneToMany): Related data is loaded only when accessed — better performance.\nEager loading (@ManyToOne default): Related data is loaded immediately with the parent — can cause performance issues.\nBest practice: Use lazy loading and load associations explicitly when needed."
+          },
+          {
+            q: "What is JPQL?",
+            a: "Java Persistence Query Language — like SQL but works on entity names/fields instead of table/column names. Example: 'SELECT u FROM User u WHERE u.email = :email'. Used with @Query annotation in Spring Data JPA repositories."
+          },
+          {
+            q: "What is the difference between CrudRepository, JpaRepository, and PagingAndSortingRepository?",
+            a: "CrudRepository — Basic CRUD methods: save, findById, findAll, delete\nPagingAndSortingRepository — Adds pagination and sorting\nJpaRepository — Extends both + adds JPA-specific methods like flush, batch operations, and findAll(Sort). Use JpaRepository for most Spring Boot projects."
+          }
+        ]
+      }
+    ]
+  },
+
+  api: {
+    title: "REST API Design",
+    subtitle: "You've built and tested REST APIs — prove it",
+    content: [
+      {
+        type: "qa",
+        label: "REST API Questions",
+        items: [
+          {
+            q: "What is REST? What are its principles?",
+            a: "REST (Representational State Transfer) is an architectural style for APIs using HTTP. Principles:\n1. Stateless — Each request is independent, no session stored on server\n2. Client-Server — Separation of concerns\n3. Uniform Interface — Consistent URLs and HTTP methods\n4. Cacheable — Responses can be cached\n5. Layered System — Client doesn't know about backend layers"
+          },
+          {
+            q: "What are HTTP methods and when do you use them?",
+            a: "GET — Retrieve data (no body)\nPOST — Create new resource (with request body)\nPUT — Update/replace entire resource\nPATCH — Partial update of resource\nDELETE — Remove resource\nRemember: GET and DELETE have no body. POST and PUT have a request body."
+          },
+          {
+            q: "What are HTTP status codes? Name important ones.",
+            a: "2xx Success: 200 OK, 201 Created, 204 No Content\n3xx Redirect: 301 Moved Permanently\n4xx Client Error: 400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, 409 Conflict\n5xx Server Error: 500 Internal Server Error, 503 Service Unavailable"
+          },
+          {
+            q: "What is the difference between @PathVariable and @RequestParam?",
+            a: "@PathVariable — Extracts value from the URL path: /users/{id} → @PathVariable Long id\n@RequestParam — Extracts query parameters: /users?role=admin → @RequestParam String role\nUse PathVariable for resource IDs, RequestParam for optional filters/search."
+          },
+          {
+            q: "What is @RequestBody and @ResponseBody?",
+            a: "@RequestBody — Maps the HTTP request body (JSON) to a Java object. Spring uses Jackson to deserialize JSON automatically.\n@ResponseBody — Serializes the return object to JSON in the response. @RestController automatically adds this to all methods."
+          },
+          {
+            q: "What is the difference between PUT and PATCH?",
+            a: "PUT replaces the ENTIRE resource. If you PUT a user object, ALL fields get updated (missing fields become null).\nPATCH does a partial update — only the fields provided in the request are updated. Better for large objects where only a few fields change."
+          },
+          {
+            q: "How did you test your APIs?",
+            a: "I used Postman to test all my REST API endpoints. I created collections for different APIs, tested all HTTP methods (GET, POST, PUT, DELETE), verified request/response bodies, checked HTTP status codes, and tested edge cases and error scenarios. I also used Talend API Tester for quick browser-based testing."
+          },
+          {
+            q: "What is a DTO and why is it used?",
+            a: "DTO (Data Transfer Object) is a plain object used to transfer data between layers or over the network. It decouples your API contract from your entity/database model. For example, you might have a UserEntity with a password field, but the UserDTO sent over the API excludes the password for security."
+          }
+        ]
+      }
+    ]
+  },
+
+  sql: {
+    title: "SQL & Databases",
+    subtitle: "MySQL & Oracle — basics they'll definitely ask",
+    content: [
+      {
+        type: "qa",
+        label: "SQL Interview Questions",
+        items: [
+          {
+            q: "What is the difference between WHERE and HAVING?",
+            a: "WHERE filters rows BEFORE grouping (used with individual rows).\nHAVING filters groups AFTER GROUP BY (used with aggregate functions like COUNT, SUM).\nExample: SELECT dept, COUNT(*) FROM employees WHERE salary > 30000 GROUP BY dept HAVING COUNT(*) > 5;"
+          },
+          {
+            q: "Explain different types of JOINs.",
+            a: "INNER JOIN — Returns rows with matching values in BOTH tables.\nLEFT JOIN — All rows from left table + matching from right (nulls if no match).\nRIGHT JOIN — All rows from right table + matching from left.\nFULL OUTER JOIN — All rows from both tables.\nCROSS JOIN — Cartesian product of both tables.\nSELF JOIN — A table joined with itself."
+          },
+          {
+            q: "What is the difference between DELETE, TRUNCATE, and DROP?",
+            a: "DELETE — Removes specific rows (can use WHERE). Logged, can rollback. Triggers fire.\nTRUNCATE — Removes ALL rows quickly. Minimal logging. Cannot rollback easily. Faster than DELETE.\nDROP — Removes the ENTIRE table (structure + data). Cannot rollback."
+          },
+          {
+            q: "What are indexes? Why are they important?",
+            a: "An index is a data structure that speeds up SELECT queries by allowing the DB to find rows faster (like a book index). CREATE INDEX idx_email ON users(email);\nTrade-off: Faster reads, but slower writes (insert/update/delete must update the index too). Use on frequently queried columns."
+          },
+          {
+            q: "What is normalization? Explain 1NF, 2NF, 3NF.",
+            a: "Normalization reduces redundancy and improves data integrity.\n1NF — Atomic values, no repeating groups. Each column has a single value.\n2NF — 1NF + no partial dependency. Non-key columns must depend on the WHOLE primary key.\n3NF — 2NF + no transitive dependency. Non-key columns must depend ONLY on the primary key."
+          },
+          {
+            q: "What is a primary key vs foreign key?",
+            a: "Primary Key — Uniquely identifies each row in a table. Cannot be NULL. Only one per table.\nForeign Key — References the primary key of another table. Creates a relationship between tables. Enforces referential integrity."
+          },
+          {
+            q: "Write a query to find the second highest salary.",
+            a: "SELECT MAX(salary) FROM employees WHERE salary < (SELECT MAX(salary) FROM employees);\n\nOR using LIMIT/OFFSET:\nSELECT salary FROM employees ORDER BY salary DESC LIMIT 1 OFFSET 1;\n\nOR using DENSE_RANK():\nSELECT salary FROM (SELECT salary, DENSE_RANK() OVER (ORDER BY salary DESC) AS rnk FROM employees) t WHERE rnk = 2;"
+          },
+          {
+            q: "What is the difference between UNION and UNION ALL?",
+            a: "UNION — Combines results of two SELECT queries and removes DUPLICATES. Slightly slower.\nUNION ALL — Combines results and KEEPS duplicates. Faster.\nBoth queries must have the same number of columns with compatible data types."
+          }
+        ]
+      }
+    ]
+  },
+
+  projects: {
+    title: "Project Deep Dive",
+    subtitle: "Know your own projects inside-out — they WILL ask",
+    content: [
+      {
+        type: "qa",
+        label: "AI Job Application Mail Generator",
+        items: [
+          {
+            q: "Explain your AI Job Mail Generator project.",
+            a: "It's a Spring Boot web application where users input the company name, job role, and description. The app calls an AI API to generate a professional job application email. I used Hibernate/JPA to store user details and email history in a MySQL database. REST API endpoints handle the input and retrieval. The frontend is in HTML/JavaScript."
+          },
+          {
+            q: "How did you integrate AI in this project?",
+            a: "I integrated an external AI API (like OpenAI or Gemini) via REST calls from the Spring Boot backend. The user's inputs (role, company, description) are sent as a prompt to the AI API, and the generated email is returned as a response and displayed to the user, and saved to the database."
+          },
+          {
+            q: "What challenges did you face in this project?",
+            a: "Managing API rate limits and handling errors when the AI API fails. Designing the database schema to efficiently store generation history. Parsing and sanitizing the AI's response to display it properly on the frontend."
+          }
+        ]
+      },
+      {
+        type: "qa",
+        label: "Online Banking System",
+        items: [
+          {
+            q: "Explain your Online Banking System project.",
+            a: "A Spring Boot application that supports core banking operations: deposit, withdrawal, balance check, and transaction history. Used Hibernate/JPA to manage customer accounts and transaction records in MySQL. Added validations to prevent invalid operations (e.g., withdrawal exceeding balance)."
+          },
+          {
+            q: "How did you handle concurrent transactions (data integrity)?",
+            a: "I used @Transactional on service methods to ensure each banking operation is atomic. If any step fails (e.g., deducting balance but failing to log the transaction), the whole operation is rolled back, maintaining consistency."
+          }
+        ]
+      },
+      {
+        type: "qa",
+        label: "Blog Platform with Admin Control",
+        items: [
+          {
+            q: "How did you implement role-based access control?",
+            a: "I created a 'role' field in the User entity with values like ADMIN and USER. In the service layer, I added checks based on the user's role before allowing certain operations (create/edit/delete posts for Admin only). This can also be implemented using Spring Security with role-based authorization."
+          }
+        ]
+      }
+    ]
+  },
+
+  company: {
+    title: "About Accel4 Technologies",
+    subtitle: "Know the company — interviewers ALWAYS ask 'What do you know about us?'",
+    content: [
+      {
+        type: "info",
+        label: "🏢 Company Overview",
+        items: [
+          "Full name: Accel4 Technologies",
+          "Type: SAP Gold Partner | Specialist Technology Consulting Firm",
+          "Headquarters: Hyderabad, India",
+          "Clients: Global enterprise clients across Semiconductor, High-Tech Manufacturing, and Med-Tech industries",
+          "Website: www.accel4.com"
+        ]
+      },
+      {
+        type: "info",
+        label: "💼 What They Do (Core Services)",
+        items: [
+          "SAP S/4HANA Transformations — Helping enterprises migrate to SAP S/4HANA on Public and Private Cloud. S/4HANA is SAP's modern in-memory ERP platform that replaces older SAP ECC systems.",
+          "SAP BTP (Business Technology Platform) — Extending enterprise landscapes using SAP BTP for integration, extension apps, and automation.",
+          "Data Platforms — Building business intelligence and analytics solutions using Databricks (AI/ML data platform) and Snowflake (cloud data warehouse).",
+          "AI/ML Product IP — Building their OWN proprietary AI/ML products specifically for the industries they serve (semiconductor, manufacturing, med-tech). This is a strategic differentiator."
+        ]
+      },
+      {
+        type: "info",
+        label: "🎯 Three Specialization Tracks",
+        items: [
+          "Track 1 — SAP S/4HANA Functional Consulting: Implementing and configuring SAP modules like FI/CO (Finance), MM (Materials Management), SD (Sales & Distribution) for clients.",
+          "Track 2 — Data Services: Working with data pipelines, analytics, and platforms like Databricks and Snowflake to deliver business insights.",
+          "Track 3 — AI/ML Product Development: Building proprietary AI/ML products for clients in semiconductor and med-tech. BEST FIT for your Java + Spring Boot + AI project background."
+        ]
+      },
+      {
+        type: "info",
+        label: "🌐 Industries They Serve",
+        items: [
+          "Semiconductor — Companies that design/manufacture chips. Complex supply chains and ERP needs. (e.g., Intel, TSMC-type clients)",
+          "High-Tech Manufacturing — Electronics and advanced product manufacturers needing end-to-end SAP coverage",
+          "Med-Tech — Medical device companies requiring SAP for compliance, traceability, and manufacturing (FDA regulations, quality management)"
+        ]
+      },
+      {
+        type: "qa",
+        label: "Questions They'll Ask About the Company",
+        items: [
+          {
+            q: "What do you know about Accel4 Technologies?",
+            a: "Accel4 is an SAP Gold Partner consulting firm headquartered in Hyderabad. They specialize in SAP S/4HANA transformations, SAP BTP extensions, and data analytics using platforms like Databricks and Snowflake. What I find very exciting is that they're not just an implementation partner — they're building their own AI/ML product IP for industries like semiconductor and med-tech. That combination of consulting depth and product innovation is rare and very appealing to me."
+          },
+          {
+            q: "Why do you want to work at Accel4?",
+            a: "Three reasons: First, Accel4 works at the intersection of enterprise technology and cutting-edge AI/ML, which is where I want to build my career. Second, the sponsored certification program means I'll gain recognized credentials fast. Third, the industries you serve — semiconductor and med-tech — are incredibly important and I'm excited to work on meaningful enterprise problems."
+          },
+          {
+            q: "What is SAP S/4HANA?",
+            a: "SAP S/4HANA is SAP's latest intelligent ERP suite built on the in-memory HANA database. 'S/4' stands for Suite 4, and 'HANA' is the database. It replaces older SAP ECC systems and offers real-time analytics, simplified data models, and cloud deployment options (public, private, or hybrid cloud)."
+          },
+          {
+            q: "What is SAP BTP?",
+            a: "SAP Business Technology Platform is SAP's integrated platform for building extension applications, integrations, analytics, and AI services on top of SAP systems. It acts as the middleware and innovation layer — companies use BTP to build custom apps that extend core SAP S/4HANA capabilities."
+          }
+        ]
+      }
+    ]
+  },
+
+  hr: {
+    title: "HR & Closing Questions",
+    subtitle: "These seem easy — but many candidates fail here",
+    content: [
+      {
+        type: "qa",
+        label: "Common HR Questions",
+        items: [
+          {
+            q: "What are your strengths?",
+            a: "My top strength is being a self-directed learner. When I encounter something I don't know — whether it was Hibernate, REST APIs, or AI integration — I figure it out through documentation, building small prototypes, and practicing. My 5 projects are proof of that. I also adapt quickly to new technologies."
+          },
+          {
+            q: "What is your weakness?",
+            a: "I sometimes spend too much time perfecting a solution when a working solution would be enough. I've been consciously working on shipping functional code first and iterating — following an MVP approach — which has made me more productive."
+          },
+          {
+            q: "Where do you see yourself in 3 years?",
+            a: "In 3 years I see myself as a certified SAP consultant or AI/ML specialist who has delivered real value to enterprise clients. I want to have deep expertise in my chosen track, contribute to Accel4's product development, and ideally start taking on mentorship responsibilities within the team."
+          },
+          {
+            q: "Are you comfortable relocating to Hyderabad?",
+            a: "Yes, absolutely. I understand the role is based in Hyderabad and I'm fully prepared to relocate. I'm excited about building my career in a new city."
+          },
+          {
+            q: "How do you stay updated with technology?",
+            a: "I follow tech blogs, documentation, and YouTube channels. I've completed multiple certifications from NPTEL, Udemy, and Symbiosis. I also practice by building real projects — the best way to learn is to build and break things."
+          },
+          {
+            q: "Do you have any questions for us?",
+            a: "YES — always ask! Try: 'What does the first 3 months at Accel4 look like for a new Associate Consultant?' OR 'How are the certification tracks structured — is there a timeline?' OR 'What does a typical client project look like for someone in the AI/ML track?' This shows you're serious and interested."
+          },
+          {
+            q: "Are you okay with the 4.5 LPA offered?",
+            a: "As a fresher, I understand that the focus is on the learning opportunity and career growth, not just the salary. I'm comfortable with the 4.5 LPA offer, especially with the performance-based revision at 12 months and the sponsored certifications. I'm here to grow and contribute."
+          }
+        ]
+      },
+      {
+        type: "tips",
+        label: "🏁 Final Interview Day Checklist",
+        items: [
+          "Research Accel4's recent news or updates before the interview",
+          "Carry printed copies of your resume (2-3 copies)",
+          "Prepare to write code on paper or whiteboard if asked",
+          "Practice your self-intro OUT LOUD at least 5 times",
+          "Have your project architecture clear in your head — they may ask to draw it",
+          "Dress professionally — first impressions count",
+          "Log in 10 minutes early for virtual interviews, check your camera/mic",
+          "Stay calm — they know you're a fresher, they want to see your attitude and learning ability"
+        ]
+      }
+    ]
+  }
+};
+
+function QACard({ item, index }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div
+      onClick={() => setOpen(!open)}
+      style={{
+        background: open ? "#0f172a" : "#1e293b",
+        border: `1px solid ${open ? "#38bdf8" : "#334155"}`,
+        borderRadius: "10px",
+        marginBottom: "10px",
+        cursor: "pointer",
+        transition: "all 0.2s ease",
+        overflow: "hidden"
+      }}
+    >
+      <div style={{ padding: "14px 18px", display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "10px" }}>
+        <span style={{ color: "#e2e8f0", fontWeight: 600, fontSize: "0.92rem", lineHeight: 1.5 }}>
+          <span style={{ color: "#38bdf8", marginRight: "8px" }}>Q{index + 1}.</span>
+          {item.q}
+        </span>
+        <span style={{ color: "#64748b", fontSize: "1.1rem", flexShrink: 0 }}>{open ? "▲" : "▼"}</span>
+      </div>
+      {open && (
+        <div style={{ padding: "0 18px 16px", borderTop: "1px solid #334155" }}>
+          <div style={{ color: "#94a3b8", fontSize: "0.88rem", lineHeight: 1.8, whiteSpace: "pre-line", paddingTop: "12px" }}>
+            {item.a}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Section({ sectionData }) {
+  return (
+    <div>
+      <div style={{ marginBottom: "28px" }}>
+        <h2 style={{ color: "#f8fafc", fontSize: "1.5rem", fontWeight: 700, marginBottom: "4px" }}>{sectionData.title}</h2>
+        <p style={{ color: "#64748b", fontSize: "0.9rem" }}>{sectionData.subtitle}</p>
+      </div>
+      {sectionData.content.map((block, bi) => (
+        <div key={bi} style={{ marginBottom: "28px" }}>
+          <div style={{
+            display: "inline-block",
+            background: "#1e3a5f",
+            color: "#7dd3fc",
+            borderRadius: "6px",
+            padding: "4px 12px",
+            fontSize: "0.8rem",
+            fontWeight: 700,
+            marginBottom: "14px",
+            letterSpacing: "0.03em"
+          }}>
+            {block.label}
+          </div>
+
+          {block.type === "qa" && block.items.map((item, i) => (
+            <QACard key={i} item={item} index={i} />
+          ))}
+
+          {block.type === "script" && (
+            <div style={{
+              background: "#0f2027",
+              border: "1px solid #1d4ed8",
+              borderRadius: "10px",
+              padding: "20px",
+              color: "#93c5fd",
+              fontSize: "0.9rem",
+              lineHeight: 1.9,
+              whiteSpace: "pre-wrap",
+              fontStyle: "italic"
+            }}>
+              {block.text}
+            </div>
+          )}
+
+          {(block.type === "tips" || block.type === "info") && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              {block.items.map((item, i) => (
+                <div key={i} style={{
+                  background: "#1e293b",
+                  border: "1px solid #334155",
+                  borderRadius: "8px",
+                  padding: "12px 16px",
+                  color: "#cbd5e1",
+                  fontSize: "0.88rem",
+                  lineHeight: 1.7,
+                  display: "flex",
+                  gap: "10px",
+                  alignItems: "flex-start"
+                }}>
+                  <span style={{ color: "#38bdf8", flexShrink: 0 }}>✦</span>
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {block.type === "warning" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              {block.items.map((item, i) => (
+                <div key={i} style={{
+                  background: "#2d1515",
+                  border: "1px solid #7f1d1d",
+                  borderRadius: "8px",
+                  padding: "12px 16px",
+                  color: "#fca5a5",
+                  fontSize: "0.88rem",
+                  lineHeight: 1.7,
+                  display: "flex",
+                  gap: "10px"
+                }}>
+                  <span style={{ flexShrink: 0 }}>✕</span>
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default function App() {
+  const [active, setActive] = useState("intro");
+
+  return (
+    <div style={{
+      minHeight: "100vh",
+      background: "#020817",
+      fontFamily: "'Segoe UI', system-ui, sans-serif",
+      display: "flex",
+      flexDirection: "column"
+    }}>
+      {/* Header */}
+      <div style={{
+        background: "linear-gradient(135deg, #0c1a3a 0%, #0f172a 100%)",
+        borderBottom: "1px solid #1e3a5f",
+        padding: "20px 24px"
+      }}>
+        <div style={{ maxWidth: "900px", margin: "0 auto" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "6px" }}>
+            <div style={{
+              background: "linear-gradient(135deg, #1d4ed8, #7c3aed)",
+              borderRadius: "8px",
+              padding: "6px 12px",
+              fontSize: "0.75rem",
+              fontWeight: 700,
+              color: "white",
+              letterSpacing: "0.1em"
+            }}>
+              INTERVIEW PREP
+            </div>
+            <span style={{ color: "#475569", fontSize: "0.8rem" }}>Accel4 Technologies • Associate Consultant</span>
+          </div>
+          <h1 style={{ color: "#f1f5f9", fontSize: "1.4rem", fontWeight: 800, margin: 0 }}>
+            Haridas Shinde — Complete Interview Guide
+          </h1>
+          <p style={{ color: "#64748b", fontSize: "0.82rem", margin: "4px 0 0" }}>
+            10 sections • Tap any Q&A card to expand the answer
+          </p>
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <div style={{
+        borderBottom: "1px solid #1e293b",
+        background: "#0b1120",
+        overflowX: "auto",
+        padding: "0 16px"
+      }}>
+        <div style={{
+          display: "flex",
+          gap: "2px",
+          maxWidth: "900px",
+          margin: "0 auto",
+          whiteSpace: "nowrap"
+        }}>
+          {sections.map(s => (
+            <button
+              key={s.id}
+              onClick={() => setActive(s.id)}
+              style={{
+                background: active === s.id ? "#1e40af" : "transparent",
+                color: active === s.id ? "#bfdbfe" : "#64748b",
+                border: "none",
+                padding: "12px 14px",
+                cursor: "pointer",
+                fontSize: "0.78rem",
+                fontWeight: active === s.id ? 700 : 500,
+                borderBottom: active === s.id ? "2px solid #38bdf8" : "2px solid transparent",
+                transition: "all 0.15s",
+                whiteSpace: "nowrap",
+                borderRadius: "0"
+              }}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div style={{ flex: 1, padding: "28px 20px", maxWidth: "900px", margin: "0 auto", width: "100%", boxSizing: "border-box" }}>
+        <Section sectionData={data[active]} />
+      </div>
+
+      {/* Footer */}
+      <div style={{
+        background: "#0b1120",
+        borderTop: "1px solid #1e293b",
+        padding: "14px 24px",
+        textAlign: "center",
+        color: "#475569",
+        fontSize: "0.75rem"
+      }}>
+        Customized for Haridas Shinde • Accel4 Technologies Interview • All the best! 🚀
+      </div>
+    </div>
+  );
+}
